@@ -53,11 +53,19 @@ ALTER TABLE profile ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tech_stack ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allow public read access" ON profile FOR SELECT USING (true);
-CREATE POLICY "Allow public read access" ON projects FOR SELECT USING (true);
-CREATE POLICY "Allow public read access" ON tech_stack FOR SELECT USING (true);
+-- Kebijakan untuk Development (Mock Login)
+-- Karena kita menggunakan login buatan sendiri (bukan Supabase Auth), 
+-- kita perlu mengizinkan role 'anon' untuk melakukan selaian SELECT (INSERT, UPDATE, DELETE).
 
--- Kebijakan untuk Admin (Gunakan Service Role atau Auth untuk lebih aman)
-CREATE POLICY "Allow all for authenticated users" ON profile FOR ALL USING (true);
-CREATE POLICY "Allow all for authenticated users" ON projects FOR ALL USING (true);
-CREATE POLICY "Allow all for authenticated users" ON tech_stack FOR ALL USING (true);
+-- PENTING: Hapus policy lama jika ada error "policy already exists"
+DROP POLICY IF EXISTS "Allow public read access" ON profile;
+DROP POLICY IF EXISTS "Allow public read access" ON projects;
+DROP POLICY IF EXISTS "Allow public read access" ON tech_stack;
+DROP POLICY IF EXISTS "Allow all for authenticated users" ON profile;
+DROP POLICY IF EXISTS "Allow all for authenticated users" ON projects;
+DROP POLICY IF EXISTS "Allow all for authenticated users" ON tech_stack;
+
+-- Buat policy baru yang mengizinkan SEMUA akses (CRUD) untuk semua orang (termasuk anonim)
+CREATE POLICY "Enable all access for anon" ON profile FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable all access for anon" ON projects FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable all access for anon" ON tech_stack FOR ALL USING (true) WITH CHECK (true);

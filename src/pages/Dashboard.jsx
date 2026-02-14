@@ -139,10 +139,12 @@ const Dashboard = () => {
         }
 
         if (editingItem !== null) {
+            delete data.projectImage; // Hapus field file input agar tidak dikirim ke Supabase
             const projectId = projects[editingItem].id;
             const { error } = await updateProject(projectId, data);
             if (!error) toast.info('Proyek diperbarui!');
         } else {
+            delete data.projectImage; // Hapus field file input agar tidak dikirim ke Supabase
             const { error } = await addProject(data);
             if (!error) toast.success('Proyek baru ditambahkan!');
         }

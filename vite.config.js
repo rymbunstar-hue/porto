@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+<<<<<<< HEAD
   ], // <--- Kasih koma di sini
   server: {
     allowedHosts: ['.ngrok-free.dev']
@@ -15,3 +16,10 @@ export default defineConfig({
 server: {
   allowedHosts: ['.ngrok-free.dev']
 }
+=======
+  ],
+  server: {
+    allowedHosts: ['.ngrok-free.dev']
+  }
+})
+>>>>>>> c791abc (fix: resolve import error and clean up vite config)

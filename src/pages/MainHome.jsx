@@ -6,6 +6,11 @@ import About from '../components/About'
 import Projects from '../components/Projects'
 import TechStack from '../components/TechStack'
 import Contact from '../components/Contact'
+<<<<<<< HEAD
+=======
+import useStore from '../store/useStore'
+
+>>>>>>> c791abc (fix: resolve import error and clean up vite config)
 
 function MainHome() {
   const navigate = useNavigate();

@@ -5,7 +5,7 @@ import fotoProfil from '../assets/foto.png';
 
 const Hero = () => {
   const { profile } = useStore();
-  
+
   const nameVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i) => ({
@@ -31,13 +31,13 @@ const Hero = () => {
 
       <div className="container mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
         <motion.div
-           initial={{ opacity: 0, x: -50 }}
-           whileInView={{ opacity: 1, x: 0 }}
-           transition={{ duration: 0.8, ease: "easeOut" }}
-           viewport={{ once: true }}
-           className="order-2 md:order-1"
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          viewport={{ once: true }}
+          className="order-2 md:order-1"
         >
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -48,7 +48,7 @@ const Hero = () => {
               TERSEDIA UNTUK PROYEK BARU
             </span>
           </motion.div>
-          
+
           <h1 className="text-4xl sm:text-5xl md:text-[4rem] lg:text-[5rem] font-black mb-6 leading-none tracking-tighter uppercase">
             {name.map((word, i) => (
               <motion.span
@@ -71,8 +71,8 @@ const Hero = () => {
               .
             </motion.span>
           </h1>
-          
-          <motion.h2 
+
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -83,7 +83,7 @@ const Hero = () => {
             <span className="text-cream-soft/30 text-base italic font-light">{profile.location}</span>
           </motion.h2>
 
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
@@ -91,21 +91,21 @@ const Hero = () => {
           >
             {profile.description}
           </motion.p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-            <motion.a 
+            <motion.a
               whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(45, 106, 79, 0.4)" }}
               whileTap={{ scale: 0.95 }}
-              href="#projects" 
+              href="#projects"
               className="px-10 py-5 bg-emerald-modern text-white rounded-full font-bold shadow-2xl transition-all duration-300 text-xs tracking-widest text-center relative overflow-hidden group"
             >
               <span className="relative z-10">LIHAT KARYA SAYA</span>
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </motion.a>
-            <motion.a 
+            <motion.a
               whileHover={{ scale: 1.05, backgroundColor: "rgba(245, 230, 211, 1)", color: "#111111" }}
               whileTap={{ scale: 0.95 }}
-              href="#contact" 
+              href="#contact"
               className="px-10 py-5 border border-cream-soft/20 text-cream-soft rounded-full font-bold transition-all duration-300 text-xs tracking-widest backdrop-blur-sm text-center"
             >
               HUBUNGI SAYA
@@ -113,35 +113,35 @@ const Hero = () => {
           </div>
         </motion.div>
 
-        <motion.div 
-           initial={{ opacity: 0, scale: 0.8 }}
-           whileInView={{ opacity: 1, scale: 1 }}
-           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-           viewport={{ once: true }}
-           className="flex justify-center order-1 md:order-2"
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true }}
+          className="flex justify-center order-1 md:order-2"
         >
           <div className="relative group max-w-[320px] w-full aspect-square animate-float">
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-modern via-emerald-hover to-emerald-modern rounded-[60%_40%_30%_70%/60%_30%_70%_40%] animate-[spin_10s_linear_infinite] opacity-50 blur-sm group-hover:opacity-100 transition-opacity"></div>
             <div className="absolute inset-[-20px] bg-emerald-modern/20 blur-[60px] rounded-full scale-110 opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
             <div className="relative h-full w-full rounded-[60%_40%_30%_70%/60%_30%_70%_40%] overflow-hidden border-2 border-white/10 shadow-premium bg-bg-alt backdrop-blur-sm p-1">
-               <div className="relative w-full h-full rounded-[inherit] overflow-hidden">
-                 <img 
-                    src={fotoProfil} 
-                    alt={profile.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0" 
-                 />
-                 <div className="absolute inset-0 bg-gradient-to-t from-bg-main/60 via-transparent to-transparent opacity-60"></div>
-               </div>
+              <div className="relative w-full h-full rounded-[inherit] overflow-hidden">
+                <img
+                  src={profile.profileImage || fotoProfil}
+                  alt={profile.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg-main/60 via-transparent to-transparent opacity-60"></div>
+              </div>
             </div>
 
-            <motion.div 
+            <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -top-4 -right-4 bg-emerald-modern text-white text-[8px] font-black px-4 py-2 rounded-full shadow-xl shadow-emerald-modern/30 tracking-widest"
             >
               LEVEL UP
             </motion.div>
-            <motion.div 
+            <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               className="absolute -bottom-4 -left-4 bg-bg-alt/80 border border-white/10 backdrop-blur-md text-emerald-modern text-[8px] font-black px-4 py-2 rounded-full shadow-xl tracking-widest"

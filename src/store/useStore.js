@@ -1,72 +1,115 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { supabase } from '../lib/supabase';
 
-const useStore = create(
-  persist(
-    (set) => ({
-      profile: {
-        name: "Rymbun Anarliansyah",
-        title: "Fullstack / Laravel Developer",
-        location: "Based in Indonesia",
-        email: "rymbunanr@gmail.com",
-        description: "Membangun pengalaman digital kelas atas dengan arsitektur modern dan kode yang bersih. Mengubah logika backend yang kompleks menjadi solusi elegan yang berfokus pada pengguna."
-      },
-      projects: [
-        {
-          title: "EcoSphere Dashboard",
-          description: "Sistem pemantauan lingkungan real-time yang dibangun untuk tim riset global dengan visualisasi data yang kompleks.",
-          tags: ["Laravel", "PHP", "MySQL", "Tailwind"],
-          img: "https://images.unsplash.com/photo-1551288049-bbda38a5f452?q=80&w=800"
-        },
-        {
-          title: "Lumina Marketplace",
-          description: "Platform e-commerce modern dengan integrasi pembayaran yang kompleks, sistem vendor, dan caching tingkat lanjut.",
-          tags: ["Laravel", "Blade", "MySQL", "Tailwind"],
-          img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800"
-        },
-        {
-          title: "NexGen ERP",
-          description: "Solusi perencanaan sumber daya perusahaan yang komprehensif dengan alur kerja otomatis dan pelaporan real-time.",
-          tags: ["Laravel", "Vue.js", "Redis", "Tailwind"],
-          img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800"
-        }
-      ],
-      techStack: [
-        { name: "Laravel", icon: "Layers", desc: "Backend Utama" },
-        { name: "PHP", icon: "Code2", desc: "Legacy & Modern" },
-        { name: "MySQL", icon: "Database", desc: "Database Relasional" },
-        { name: "Tailwind", icon: "Palette", desc: "Styling UI" },
-        { name: "React", icon: "Layout", desc: "UI Interaktif" },
-        { name: "Github", icon: "Github", desc: "Kontrol Versi" }
-      ],
-      
-      updateProfile: (newProfile) => set({ profile: newProfile }),
-      
-      addProject: (project) => set((state) => ({ 
-        projects: [...state.projects, project] 
-      })),
-      
-      updateProject: (index, updatedProject) => set((state) => {
-        const newProjects = [...state.projects];
-        newProjects[index] = updatedProject;
-        return { projects: newProjects };
-      }),
-      
-      deleteProject: (index) => set((state) => ({
-        projects: state.projects.filter((_, i) => i !== index)
-      })),
+const useStore = create((set, get) => ({
+  profile: {
+    name: "Rymbun Anarliansyah",
+    title: "Fullstack / Laravel Developer",
+    location: "Based in Indonesia",
+    email: "rymbunanr@gmail.com",
+    profileImage: null,
+    description: "Membangun pengalaman digital kelas atas dengan arsitektur modern dan kode yang bersih.",
+    stats: [],
+    socials: {}
+  },
+  projects: [],
+  techStack: [],
+  isAuthenticated: false,
+  isLoading: false,
 
-      updateTech: (index, updatedTech) => set((state) => {
-        const newTech = [...state.techStack];
-        newTech[index] = updatedTech;
-        return { techStack: newTech };
-      })
-    }),
-    {
-      name: 'portfolio-storage',
-      version: 1, // Tambahkan versi untuk mereset storage lama agar sinkron dengan kode baru
+  // Fetch all data from Supabase
+  fetchData: async () => {
+    set({ isLoading: true });
+    try {
+      const { data: profileData } = await supabase.from('profile').select('*').single();
+      if (profileData) set({ profile: profileData });
+
+      const { data: projectsData } = await supabase.from('projects').select('*').order('created_at', { ascending: false });
+      if (projectsData) set({ projects: projectsData });
+
+      const { data: techData } = await supabase.from('tech_stack').select('*').order('order_index');
+      if (techData) set({ techStack: techData });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      set({ isLoading: false });
     }
-  )
-);
+  },
+
+  login: (username, password) => {
+    const adminUser = import.meta.env.VITE_ADMIN_USERNAME || 'admin';
+    const adminPass = import.meta.env.VITE_ADMIN_PASSWORD || 'password123';
+
+    if (username === adminUser && password === adminPass) {
+      set({ isAuthenticated: true });
+      return true;
+    }
+    return false;
+  },
+
+  logout: () => set({ isAuthenticated: false }),
+
+  updateProfile: async (newProfile) => {
+    const { error } = await supabase.from('profile').update(newProfile).eq('id', 1);
+    if (!error) set({ profile: newProfile });
+    return { error };
+  },
+
+  addProject: async (project) => {
+    const { data, error } = await supabase.from('projects').insert([project]).select();
+    if (!error && data) {
+      set((state) => ({ projects: [data[0], ...state.projects] }));
+    }
+    return { error };
+  },
+
+  updateProject: async (id, updatedProject) => {
+    const { error } = await supabase.from('projects').update(updatedProject).eq('id', id);
+    if (!error) {
+      set((state) => ({
+        projects: state.projects.map((p) => (p.id === id ? { ...p, ...updatedProject } : p))
+      }));
+    }
+    return { error };
+  },
+
+  deleteProject: async (id) => {
+    const { error } = await supabase.from('projects').delete().eq('id', id);
+    if (!error) {
+      set((state) => ({
+        projects: state.projects.filter((p) => p.id !== id)
+      }));
+    }
+    return { error };
+  },
+
+  addTech: async (tech) => {
+    const { data, error } = await supabase.from('tech_stack').insert([tech]).select();
+    if (!error && data) {
+      set((state) => ({ techStack: [...state.techStack, data[0]] }));
+    }
+    return { error };
+  },
+
+  updateTech: async (id, updatedTech) => {
+    const { error } = await supabase.from('tech_stack').update(updatedTech).eq('id', id);
+    if (!error) {
+      set((state) => ({
+        techStack: state.techStack.map((t) => (t.id === id ? { ...t, ...updatedTech } : t))
+      }));
+    }
+    return { error };
+  },
+
+  deleteTech: async (id) => {
+    const { error } = await supabase.from('tech_stack').delete().eq('id', id);
+    if (!error) {
+      set((state) => ({
+        techStack: state.techStack.filter((t) => t.id !== id)
+      }));
+    }
+    return { error };
+  }
+}));
 
 export default useStore;
